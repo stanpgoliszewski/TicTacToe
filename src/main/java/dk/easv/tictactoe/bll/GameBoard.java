@@ -12,6 +12,7 @@ public class GameBoard implements IGameBoard
     private int currentPlayer = 0;   // 0 or 1, as seen by the outside world
     private boolean gameOver = false;
     private int winner = -1;         // -1 = no winner / draw
+    int[][] winningCells = null;
 
     /**
      * Returns 0 for player 0, 1 for player 1.
@@ -40,7 +41,7 @@ public class GameBoard implements IGameBoard
         if (gameOver || board[row][col] != 0)
             return false;
 
-        int mark = currentPlayer + 1;   // 1 or 2 in the array
+        int mark = currentPlayer + 1;
         board[row][col] = mark;
 
         if (hasWon(mark))
@@ -55,7 +56,7 @@ public class GameBoard implements IGameBoard
         }
         else
         {
-            currentPlayer = 1 - currentPlayer;
+            currentPlayer = 1 - currentPlayer;      
         }
         return true;
     }
@@ -68,6 +69,7 @@ public class GameBoard implements IGameBoard
     @Override
     public boolean isGameOver()
     {
+
         return gameOver;
     }
 
@@ -105,14 +107,41 @@ public class GameBoard implements IGameBoard
         return true;
     }
 
+
+
+
     private boolean hasWon(int mark)
     {
         for (int i = 0; i < 3; i++)
         {
-            if (board[i][0] == mark && board[i][1] == mark && board[i][2] == mark) return true; // row
-            if (board[0][i] == mark && board[1][i] == mark && board[2][i] == mark) return true; // column
+            if (board[i][0] == mark && board[i][1] == mark && board[i][2] == mark)
+            {
+                winningCells = new int[][]{{0, i}, {1, i}, {2, i}};   // row i
+                return true;
+            }
+            if (board[0][i] == mark && board[1][i] == mark && board[2][i] == mark)
+            {
+                winningCells = new int[][]{{i, 0}, {i, 1}, {i, 2}};   // column i
+                return true;
+            }
         }
-        return (board[0][0] == mark && board[1][1] == mark && board[2][2] == mark)   // diagonal
-                || (board[0][2] == mark && board[1][1] == mark && board[2][0] == mark);  // anti-diagonal
+        if (board[0][0] == mark && board[1][1] == mark && board[2][2] == mark)
+        {
+            winningCells = new int[][]{{0, 0}, {1, 1}, {2, 2}};
+            return true;
+        }
+        if (board[0][2] == mark && board[1][1] == mark && board[2][0] == mark)
+        {
+            winningCells = new int[][]{{2, 0}, {1, 1}, {0, 2}};
+            return true;
+        }
+        return false;
+    }
+
+
+    @Override
+    public int[][] getWinningCells()
+    {
+        return winningCells;
     }
 }

@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Cell;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
@@ -54,17 +55,40 @@ public class TicTacViewController implements Initializable
             if (game.play(c, r))
             {
                 btn.setText(player == 0 ? "X" : "O");
-                if (game.isGameOver())
+                if (game.isGameOver()) {
                     displayWinner(game.getWinner());
+                    if(game.getWinner()!= -1) highlightWinner();
+
+                }
                 else
                     setPlayer();
             }
+
+
         } catch (Exception e)
         {
             System.out.println(e.getMessage());
         }
     }
 
+    private void highlightWinner(){
+        int[][] cells = game.getWinningCells();
+        if (cells == null) return;
+
+        for (Node n : gridPane.getChildren())
+        {
+            if (!(n instanceof Button)) continue;
+
+            Integer row = GridPane.getRowIndex(n);
+            Integer col = GridPane.getColumnIndex(n);
+            int r = (row == null) ? 0 : row;
+            int c = (col == null) ? 0 : col;
+
+            for (int[] cell : cells)
+                if (cell[0] == c && cell[1] == r)
+                    n.setStyle("-fx-background-color: lightgreen;");
+        }
+    }
     /**
      * Event handler for starting a new game
      *
@@ -122,6 +146,7 @@ public class TicTacViewController implements Initializable
                 break;
         }
         lblPlayer.setText(message);
+
     }
 
     /**
@@ -133,6 +158,7 @@ public class TicTacViewController implements Initializable
         {
             Button btn = (Button) n;
             btn.setText("");
+            btn.setStyle("");
         }
     }
 }
