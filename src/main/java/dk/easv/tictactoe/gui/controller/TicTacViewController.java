@@ -51,9 +51,10 @@ public class TicTacViewController implements Initializable
             int r = (row == null) ? 0 : row;
             int c = (col == null) ? 0 : col;
 
-            int player = game.getNextPlayer();      // read BEFORE play()
+            int player = game.getNextPlayer();
             if (game.play(c, r))
             {
+
                 btn.setText(player == 0 ? "X" : "O");
                 if (game.isGameOver()) {
                     displayWinner(game.getWinner());
@@ -77,7 +78,6 @@ public class TicTacViewController implements Initializable
 
         for (Node n : gridPane.getChildren())
         {
-            if (!(n instanceof Button)) continue;
 
             Integer row = GridPane.getRowIndex(n);
             Integer col = GridPane.getColumnIndex(n);
@@ -86,7 +86,8 @@ public class TicTacViewController implements Initializable
 
             for (int[] cell : cells)
                 if (cell[0] == c && cell[1] == r)
-                        n.setStyle("-fx-background-color: lightgreen;");
+                    n.setStyle(n.getStyle() + "-fx-background-color: lightgreen;"
+                          +  "-fx-text-fill: #000;");
         }
     }
 
@@ -163,7 +164,7 @@ public class TicTacViewController implements Initializable
         {
             Button btn = (Button) n;
             btn.setText("");
-            btn.setStyle("");
+            btn.setStyle("-fx-background-color: #363737;");
         }
     }
 }
