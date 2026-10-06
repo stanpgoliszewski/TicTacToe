@@ -86,9 +86,14 @@ public class TicTacViewController implements Initializable
 
             for (int[] cell : cells)
                 if (cell[0] == c && cell[1] == r)
-                    n.setStyle("-fx-background-color: lightgreen;");
+                        n.setStyle("-fx-background-color: lightgreen;");
         }
     }
+
+    /*@FXML
+    private void (){
+
+    }*/
     /**
      * Event handler for starting a new game
      *
