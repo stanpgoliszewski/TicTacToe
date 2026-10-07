@@ -12,6 +12,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Cell;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import dk.easv.tictactoe.bll.RandomAI;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
 
 // Project imports
 import dk.easv.tictactoe.bll.GameBoard;
@@ -26,14 +29,21 @@ public class TicTacViewController implements Initializable
     @FXML
     private Label lblPlayer;
 
-    @FXML
-    private Button btnNewGame;
 
     @FXML
     private GridPane gridPane;
     
     private static final String TXT_PLAYER = "Player: ";
     private IGameBoard game;
+
+    private boolean singlePlayer = false;
+    private boolean botThinking = false;
+    private final RandomAI AI = new RandomAI();
+    private PauseTransition botPause;
+
+    public void setSinglePlayer(boolean value) { singlePlayer = value; }
+
+
 
     /**
      * Event handler for the grid buttonss
@@ -43,41 +53,82 @@ public class TicTacViewController implements Initializable
     @FXML
     private void handleButtonAction(ActionEvent event)
     {
-        try
-        {
-            Button btn = (Button) event.getSource();
-            Integer row = GridPane.getRowIndex(btn);
-            Integer col = GridPane.getColumnIndex(btn);
-            int r = (row == null) ? 0 : row;
-            int c = (col == null) ? 0 : col;
+        if (botThinking) return;                    // ignore clicks during the bot's turn
 
-            int player = game.getNextPlayer();
-            if (game.play(c, r))
+        Node source = (Node) event.getSource();
+        Integer row = GridPane.getRowIndex(source);
+        Integer col = GridPane.getColumnIndex(source);
+        int r = (row == null) ? 0 : row;
+        int c = (col == null) ? 0 : col;
+
+        if (makeMove(c, r) && singlePlayer && !game.isGameOver())
+            botMove();
+    }
+
+    private void botMove()
+    {
+        botThinking = true;
+        botPause = new PauseTransition(Duration.millis(400));   // small delay so it feels natural
+        botPause.setOnFinished(e ->
+        {
+            int[] move = AI.chooseMove(game);
+            if (move != null) makeMove(move[0], move[1]);
+            botThinking = false;
+        });
+        botPause.play();
+    }
+
+    private boolean makeMove(int c, int r)
+    {
+        int player = game.getNextPlayer();          // read BEFORE play()
+        if (!game.play(c, r)) return false;
+
+        Button btn = getButton(c, r);
+        btn.setText(player == 0 ? "X" : "O");
+
+        if (game.isGameOver() && game.getWinner()==-1)
+        {
+            for (Node n : gridPane.getChildren())
             {
-
-                btn.setText(player == 0 ? "X" : "O");
-                if (game.isGameOver()) {
-                    displayWinner(game.getWinner());
-                    if(game.getWinner()!= -1) highlightWinner();
-
-                }
-                else
-                    setPlayer();
+                n.setStyle(n.getStyle() + "-fx-background-color: red;");
             }
+            displayWinner(game.getWinner());
 
-
-        } catch (Exception e)
-        {
-            System.out.println(e.getMessage());
+            return true;
         }
+
+        else if (game.getWinner()==1 || game.getWinner() == 0){
+            displayWinner(game.getWinner());
+            highlightWinner();
+        }
+
+
+
+        else setPlayer();
+        return true;
+    }
+
+    private Button getButton(int c, int r)
+    {
+        for (Node n : gridPane.getChildren())
+        {
+            if (!(n instanceof Button)) continue;
+            Integer row = GridPane.getRowIndex(n);
+            Integer col = GridPane.getColumnIndex(n);
+            if ((col == null ? 0 : col) == c && (row == null ? 0 : row) == r)
+                return (Button) n;
+        }
+        return null;
     }
 
     private void highlightWinner(){
+
         int[][] cells = game.getWinningCells();
         if (cells == null) return;
 
         for (Node n : gridPane.getChildren())
         {
+
 
             Integer row = GridPane.getRowIndex(n);
             Integer col = GridPane.getColumnIndex(n);

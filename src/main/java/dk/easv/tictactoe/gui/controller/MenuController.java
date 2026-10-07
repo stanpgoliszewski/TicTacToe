@@ -30,6 +30,9 @@ public class MenuController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/TicTacView.fxml"));
         Parent root = loader.load();
 
+        TicTacViewController controller = loader.getController();
+        controller.setSinglePlayer("btnSingleplayer".equals(id));
+
         Stage stage = new Stage();
         stage.setScene(new Scene(root));
         stage.setResizable(false);

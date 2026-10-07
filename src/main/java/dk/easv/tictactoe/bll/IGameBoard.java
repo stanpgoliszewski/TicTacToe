@@ -47,4 +47,5 @@ public interface IGameBoard
      */
     void newGame();
     int[][] getWinningCells();
+    int getCell(int col, int row);
 }

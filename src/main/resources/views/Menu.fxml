@@ -17,7 +17,7 @@
                   <Insets />
                </VBox.margin>
                <children>
-                  <Label alignment="CENTER" contentDisplay="CENTER" text="TIC TAC TOE" textAlignment="CENTER" textFill="WHITE">
+                  <Label fx:id="lbTicTacToe" alignment="CENTER" contentDisplay="CENTER" text="TIC TAC TOE" textAlignment="CENTER" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="30.0" />
                      </font>
@@ -29,7 +29,7 @@
             </HBox>
             <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: #5430AA;">
                <children>
-                  <Label alignment="CENTER" contentDisplay="CENTER" text="Select gamemode:" textAlignment="CENTER" textFill="WHITE">
+                  <Label fx:id="lbGamemode" alignment="CENTER" contentDisplay="CENTER" text="Select gamemode:" textAlignment="CENTER" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>

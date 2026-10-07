@@ -138,6 +138,12 @@ public class GameBoard implements IGameBoard
         return false;
     }
 
+    @Override
+    public int getCell(int col, int row)
+    {
+        return board[row][col] - 1;   // array holds 0/1/2, outside world sees -1/0/1
+    }
+
 
     @Override
     public int[][] getWinningCells()
